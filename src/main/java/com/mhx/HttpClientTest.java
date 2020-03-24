@@ -1,6 +1,7 @@
 package com.mhx;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.config.Registry;
@@ -38,7 +39,13 @@ public class HttpClientTest {
                 .register("https", sslConnectionFactory).build();
         HttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager(registry);
 
-        return HttpClients.custom().setConnectionManager(connManager).build();
+        int timeout = 5;
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout * 1000)
+                .setConnectionRequestTimeout(timeout * 1000)
+                .setSocketTimeout(timeout * 1000)
+                .build();
+        return HttpClients.custom().setConnectionManager(connManager).setDefaultRequestConfig(config).build();
     }
 
     public static void main(String[] args) throws Exception {
